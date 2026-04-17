@@ -29,7 +29,7 @@
             justify-content: center;
         }
         .otp-field{
-            width: 50px;
+            width: 100%;
             height: 60px;
             font-size: 1.5rem;
             text-align: center;
@@ -62,17 +62,14 @@
     <div class="input-container">
         <div class="input-inner">
             <h2 class="text-center">Enter OTP Code</h2>
-            <p class="text-center">Enter the 6 digit code sent to your phone number and yourname@emailaddress.com</p>
+            <p class="text-center">Enter the {{ $digits }} digit code sent to your email address: {{ $user->email }}</p>
             <span class="otp-inputs">
                 <form id="input">
-                    <input type="text" maxlength="1" class="otp-field" autofocus>
-                    <input type="text" maxlength="1" class="otp-field">
-                    <input type="text" maxlength="1" class="otp-field">
-                    <input type="text" maxlength="1" class="otp-field">
-                    <input type="text" maxlength="1" class="otp-field">
-                    <input type="text" maxlength="1" class="otp-field">
+                    
+                    @csrf
+                    <input type="text" maxlength="{{ $digits }}" class="otp-field" name="client_otp" autofocus>
 
-                    <p class="text-center">Haven't recieved a code. <a href="#">Resend</a></p>
+                    <p class="text-center">Haven't recieved a code. <a href="{{ route('resend.otp') }}">Resend</a></p>
                     <button class="verify-button" type="submit">Verify</button>
                 </form>
             </span>
@@ -81,43 +78,26 @@
 
     <script>
         const verify_form = document.getElementById('input');
-        const inputs = document.querySelectorAll(".otp-field");
-        const otp_value = [];
-
-        inputs.forEach((input, index) => {
-            input.addEventListener("keyup", (e) => {
-                if(e.key >= 0 && e.key <= 9){
-                    console.log(input.value);
-                    if(index < inputs.length - 1) inputs[index + 1].focus();
-                }else if(e.key === "Backspace"){
-                    if(index > 0) inputs[index - 1].focus();
-                }
-            });
-
-            input.addEventListener("paste", (e) => {
-                e.preventDefault();
-                const data = e.clipboardData.getData("text");
-                if(!/^\d+$/.test(data)) return;
-
-                const digits = data.split("");
-                inputs.forEach((inp, i) => {
-                    if( i >= index && digits.length > 0){
-                        inp.value = digits.shift();
-                        inp.focus();
-                    }
-                })
-            });
-        });
-
-        async function verifyOTP(){
-            console.log(otp_value);
+        let otp_value = [];
+        
+        async function verifyOTP(otp_value){
             const formData = new FormData(verify_form);
 
             try {
                 const response = await fetch("{{ $url }}", {
                     method: "POST",
                     body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
+                const data = await response.json();
+
+                if(data.verified === true){
+                    window.location.href = data.redirect_url;
+                }else{
+                    alert(data.message || "Invalid OTP");
+                }
             } catch (e) {
                 console.error(e);
             }
@@ -125,7 +105,7 @@
 
         verify_form.addEventListener("submit", (event) => {
             event.preventDefault();
-            verifyOTP();
+            verifyOTP(otp_value);
         });
     </script>
     <!-- It is quality rather than quantity that matters. - Lucius Annaeus Seneca -->

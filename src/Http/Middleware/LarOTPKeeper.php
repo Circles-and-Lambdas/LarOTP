@@ -20,16 +20,20 @@ class LarOTPKeeper{
             return redirect()->route('login');
         }
 
-        $user = $request->user();
+        session()->put('url.intended', $request->fullUrl());
 
-        $user_otp = UserOTP::where('user_id', $user->id)->latest()->first();
+        if ($request->routeIs('verify') || $request->routeIs('verify.otp')) {
+            return $next($request);
+        }
+
+        $user = $request->user();
+        $user_otp = $user->checkOTPRecord();
 
         if(!isset($user_otp)){
             return redirect()->route('verify');
         }
 
-
-        if(isset($user_otp->verified_at)){
+        if($user_otp && isset($user_otp->verified_at)){
             return $next($request);
         }
 

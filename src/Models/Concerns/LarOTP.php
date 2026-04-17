@@ -6,6 +6,7 @@ namespace circlesandlambdas\larotp\Models\Concerns;
 
 use circlesandlambdas\larotp\HOTP;
 use circlesandlambdas\larotp\Models\UserCounter;
+use circlesandlambdas\larotp\Models\UserOTP;
 use Exception;
 use Illuminate\Auth\Authenticatable;
 use InvalidArgumentException;
@@ -110,6 +111,8 @@ trait LarOTP{
 
         $output = $hotp->verify($client_otp);
 
+        UserCounter::where('id', $this->id)->increment('counter');
+
         return $output;
     }
 
@@ -144,6 +147,19 @@ trait LarOTP{
         ]);
 
         return $user_counter->counter;
+    }
+
+
+    public function checkOTPRecord(){
+
+        //Check if userOTP record latest record is expired
+        $user_otp = UserOTP::where('user_id', $this->id)->latest()->first();
+
+        return $user_otp;
+    }
+
+    public function updateOTPRecord(){
+        UserOTP::where('user_id', $this->id)->latest()->first()->update(['verified_at'=> now()]);
     }
 }
 
