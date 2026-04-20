@@ -152,8 +152,10 @@ trait LarOTP{
 
     public function checkOTPRecord(){
 
-        //Check if userOTP record latest record is expired
-        $user_otp = UserOTP::where('user_id', $this->id)->latest()->first();
+        $user_otp = UserOTP::where('user_id', $this->id)
+                    ->whereNotNull('verified_at')
+                    ->latest('verified_at')
+                    ->first();
 
         return $user_otp;
     }

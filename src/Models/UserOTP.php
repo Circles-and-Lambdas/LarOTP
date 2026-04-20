@@ -16,5 +16,10 @@ class UserOTP extends Model{
 
     protected $casts = [
         'expires_at' => 'datetime',
+        'verified_at' => 'datetime',
     ];
+
+    public function prunable(){
+        return static::where("created_at", "<=", now()->subMonth());
+    }
 }

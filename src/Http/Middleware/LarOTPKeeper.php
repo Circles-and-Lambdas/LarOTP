@@ -29,18 +29,17 @@ class LarOTPKeeper{
         $user = $request->user();
         $user_otp = $user->checkOTPRecord();
 
+
         if(!isset($user_otp)){
             return redirect()->route('verify');
         }
 
-        if($user_otp && isset($user_otp->verified_at)){
-            return $next($request);
-        }
+        $expiry_time = config("larotp.expiry_min", 10);
 
-        if($request->is('larotp/*')){
+        if($user_otp->expires_at->isPast()){
             return redirect()->route('verify');
         }
 
-        return redirect()->route('verify');
+        return $next($request);
     }
 }

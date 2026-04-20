@@ -69,7 +69,7 @@
                     @csrf
                     <input type="text" maxlength="{{ $digits }}" class="otp-field" name="client_otp" autofocus>
 
-                    <p class="text-center">Haven't recieved a code. <a href="{{ route('resend.otp') }}">Resend</a></p>
+                    <p class="text-center">Haven't received a code. <span id="resend_link"><a onclick="regenerateOTP">Resend</a></span></p>
                     <button class="verify-button" type="submit">Verify</button>
                 </form>
             </span>
@@ -78,6 +78,7 @@
 
     <script>
         const verify_form = document.getElementById('input');
+        let cooldownTimer = 120;
         let otp_value = [];
         
         async function verifyOTP(otp_value){
@@ -101,6 +102,43 @@
             } catch (e) {
                 console.error(e);
             }
+        }
+
+        //Regenerate OTP and change message to show cooldown timer to user.
+        //Request will be sent through FetchAPI
+        async function regenerateOTP(){
+            const csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            if(!csrf_token){
+                alert("Missing CSRF Token");
+                return;
+            }
+
+            try{
+                const response = fetch({{ route('resend.otp') }}, {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': csrf_token,
+                        'Accept': 'application/json',
+                    }
+                });
+
+                this.switchCooldownTimer();
+
+                if (!response.ok) throw new Error('Network response not OK');
+
+                const result = await response.json();
+
+                //Alert user through toastr.
+                console.log("Success: ", result);
+            }catch(err){
+                alert("Error during Requesting new token: "+ err);
+                console.log("Error: ", err);
+            }
+        }
+
+        function switchCooldownTimer(){
+            
         }
 
         verify_form.addEventListener("submit", (event) => {
