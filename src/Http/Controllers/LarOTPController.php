@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use RuntimeException;
 
 class LarOTPController extends Controller{
@@ -21,6 +22,9 @@ class LarOTPController extends Controller{
     }
 
     public function index(Request $request){
+        //Rate Limit access to OTP page
+        $this->rateLimitCheck($request);
+
         $user = $request->user();
 
         $otp_record = $user->checkOTPRecord();
@@ -88,7 +92,30 @@ class LarOTPController extends Controller{
     public function requestOTP(Request $request){
         $user = $request->user();
 
-        $user->generateHOTP();
+        $otp = $user->generateHOTP();
+
+        if($otp){
+            return response()->json([
+                "otp_request" => true,
+                "message" => "OTP created successfully",
+            ]);
+        }
+    }
+
+
+    /**
+     * Adds a rate limiter to the index function to prevent too many attempts to view the page
+     * @param mixed $request
+     */
+    private function rateLimitCheck($request){
+        $key = "verification-attempt: ".$request->ip();
+
+        if(RateLimiter::tooManyAttempts($key, $maxAttempts = 5)){
+            $seconds = RateLimiter::availableIn($key);
+            return response()->json(['message' => "Wait $seconds seconds"], 429);
+        }
+
+        RateLimiter::hit($key, $decaySeconds = 60);
     }
 
 }
