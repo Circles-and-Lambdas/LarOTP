@@ -41,7 +41,7 @@ final class HOTP extends OTP implements OTPInterface{
 
         $truncated = $this->truncate($hmac);
 
-        $string = $this->generateValue($truncated);
+        $string = $this->generateValue($truncated, $this->digits);
 
         return $string;
     }
@@ -67,7 +67,7 @@ final class HOTP extends OTP implements OTPInterface{
         $counterBinary = pack('N*', 0, $counter);
 
         if(!is_string($key) || !is_string($counterBinary)){
-            throw new InvalidArgumentException("Incorrect types. Key: ".gettype($key)." Key must be a string. Counter: ".gettype($counter)." Counter must be an integer");
+            throw new InvalidArgumentException("Incorrect types. Key: ".gettype($key)." Key must be a string. Counter: ".gettype($counter)." Counter must be an string");
         }
 
         try {
@@ -83,38 +83,6 @@ final class HOTP extends OTP implements OTPInterface{
             error_log('Unexpected error during HMAC generation: '.$th->getMessage());
             throw $th;
         }
-    }
-
-    /**
-     * Dynamic truncation of the HMAC-SHA-1 value to generate a 4byte dynamic binary code from the 160 bit value.
-     * @param string $hmac HMAC-SHA-1 Value
-     * @return int 31-bit $truncated value
-     * 
-     */
-    private function truncate($hmac){
-        if(!isset($hmac)){
-            throw new InvalidArgumentException("Missing Truncation parameters",0);
-        }
-
-        $offset = ord($hmac[19]) & 0x0F;
-        
-        $truncated = ((ord($hmac[$offset]) & 0x7F) << 24) |
-                    ((ord($hmac[$offset + 1]) & 0xFF) << 16) |
-                    ((ord($hmac[$offset + 2]) & 0xFF) << 8) |
-                    (ord($hmac[$offset + 3]) & 0xFF);
-
-        return $truncated;
-    }
-
-    /**
-     * Performs a modulo operation on the dynamiscally truncated HMAC to the required digits
-     * @param mixed $truncated Output of the dynamic truncation
-     * @return string OTP Value
-     */
-    private function generateValue($truncated){
-        $otp_value = $truncated % pow(10, $this->digits);
-
-        return str_pad((string)$otp_value, $this->digits, '0', STR_PAD_LEFT);
     }
 
     /**

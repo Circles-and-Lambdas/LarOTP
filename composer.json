@@ -25,5 +25,8 @@
                 "circlesandlambdas\\larotp\\LarOTPServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "11.5.x-dev"
     }
 }

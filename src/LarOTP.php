@@ -11,9 +11,7 @@ use InvalidArgumentException;
 use RuntimeException;
 
 class LarOTP{
-    public $config = config('larotp');
-
-    public function __construct(?array $config=null){
+    public function __construct(array $config = null){
         if(isset($this->config)){
             throw new RuntimeException("larotp config not set up correctly");
         }
