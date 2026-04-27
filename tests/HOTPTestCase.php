@@ -8,16 +8,17 @@ use circlesandlambdas\larotp\HOTP;
 use circlesandlambdas\larotp\LarOTP;
 use PHPUnit\Framework\TestCase;
 
-class HOTPTestCase extends TestCase{
-
+class HOTPTestCase extends TestCase
+{
     public $config = [
         'key_length' => 32,
         'counter' => 0,
         'digits' => 6,
-        'algo' => 'sha1'
+        'algo' => 'sha1',
     ];
 
-    public function testHOTPObjectIsCreated(){
+    public function test_hotp_object_is_created()
+    {
         $larotp = new LarOTP($this->config);
 
         $key = base64_decode($larotp->createSecretKey());
@@ -25,10 +26,11 @@ class HOTPTestCase extends TestCase{
         $hotp = new HOTP($key, $this->config['counter'], $this->config['digits'], $this->config['algo']);
 
         $this->assertNotNull($hotp);
-        $this->assertInstanceOf(HOTP::class,$hotp);
+        $this->assertInstanceOf(HOTP::class, $hotp);
     }
 
-    public function testOTPIsGenerated(){
+    public function test_otp_is_generated()
+    {
         $larotp = new LarOTP($this->config);
 
         $key = base64_decode($larotp->createSecretKey());
@@ -41,8 +43,9 @@ class HOTPTestCase extends TestCase{
         $this->assertIsString($otp);
     }
 
-    public function testOTPCodeVerifiedSuccessfully(){
-        $client_otp = "321432";
+    public function test_otp_code_verified_successfully()
+    {
+        $client_otp = '321432';
 
         $larotp = new LarOTP($this->config);
 

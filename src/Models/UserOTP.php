@@ -7,9 +7,10 @@ namespace circlesandlambdas\larotp\Models;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 
-class UserOTP extends Model{
-    protected $table = "user_otps";
-    
+class UserOTP extends Model
+{
+    protected $table = 'user_otps';
+
     use MassPrunable;
 
     public $guarded = [];
@@ -19,7 +20,8 @@ class UserOTP extends Model{
         'verified_at' => 'datetime',
     ];
 
-    public function prunable(){
-        return static::where("created_at", "<=", now()->subMonth());
+    public function prunable()
+    {
+        return static::where('created_at', '<=', now()->subMonth());
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace circlesandlambdas\larotp;
 
@@ -10,21 +10,23 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
-
-class LarOTPServiceProvider extends ServiceProvider{
+class LarOTPServiceProvider extends ServiceProvider
+{
     /**
      * Register Services
      */
-    public function register(): void{
-        $this->app->singleton(LarOTP::class, function($app){
-            return new LarOTP();
+    public function register(): void
+    {
+        $this->app->singleton(LarOTP::class, function ($app) {
+            return new LarOTP;
         });
     }
 
     /**
      * Bootstrap services
      */
-    public function boot(): void{
+    public function boot(): void
+    {
         $this->registerSetup();
         $this->registerMiddleware();
         $this->registerResources();
@@ -32,40 +34,46 @@ class LarOTPServiceProvider extends ServiceProvider{
         $this->registerCommands();
     }
 
-    protected function registerSetup(){
+    protected function registerSetup()
+    {
         $this->publishes([
             __DIR__.'/config/larotp.php' => config_path('larotp.php'),
         ], 'larotp-config');
-        
+
         $this->publishes([
-            __DIR__.'/../database/migrations/' => database_path('migrations')
+            __DIR__.'/../database/migrations/' => database_path('migrations'),
         ], 'larotp-migrations');
     }
 
-    public function registerMiddleware(){
+    public function registerMiddleware()
+    {
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('larotp.keeper', LarOTPKeeper::class);
     }
 
-    protected function registerResources(){
+    protected function registerResources()
+    {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'larotp');
     }
 
-    protected function registerRoutes(){
-        Route::group($this->routeConfiguration(), function(){
+    protected function registerRoutes()
+    {
+        Route::group($this->routeConfiguration(), function () {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
     }
 
-    protected function registerCommands(){
+    protected function registerCommands()
+    {
         if ($this->app->runningInConsole()) {
-                $this->commands([
-                    CreateSymmKey::class,
-                ]);
+            $this->commands([
+                CreateSymmKey::class,
+            ]);
         }
     }
 
-    protected function routeConfiguration(){
+    protected function routeConfiguration()
+    {
         return [
             'prefix' => 'larotp',
             'middleware' => ['web'],

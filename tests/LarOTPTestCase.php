@@ -7,9 +7,10 @@ namespace circlesandlambdas\larotp\Tests;
 use circlesandlambdas\larotp\LarOTP;
 use PHPUnit\Framework\TestCase;
 
-
-class LarOTPTestCase extends TestCase{
-    public function testEncodedKeyShouldBeCreated(){
+class LarOTPTestCase extends TestCase
+{
+    public function test_encoded_key_should_be_created()
+    {
         $config = [
             'key_length' => 32,
         ];
@@ -21,7 +22,8 @@ class LarOTPTestCase extends TestCase{
         $this->assertIsString($encoded_key);
     }
 
-    public function testEncodedKeyShouldBeBase64(){
+    public function test_encoded_key_should_be_base64()
+    {
         $config = [
             'key_length' => 32,
         ];

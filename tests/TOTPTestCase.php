@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace circlesandlambdas\larotp\Tests;
 
-use circlesandlambdas\larotp\TOTP;
 use circlesandlambdas\larotp\LarOTP;
+use circlesandlambdas\larotp\TOTP;
 use PHPUnit\Framework\TestCase;
 
-class TOTPTestCase extends TestCase{
-
+class TOTPTestCase extends TestCase
+{
     public $config = [
         'key_length' => 32,
         'timestep' => 30,
         'digits' => 6,
-        'algoTOTP' => 'sha512'
+        'algoTOTP' => 'sha512',
     ];
 
-    public function testTOTPObjectIsCreated(){
+    public function test_totp_object_is_created()
+    {
         $larotp = new LarOTP($this->config);
 
         $key = base64_decode($larotp->createSecretKey());
@@ -25,10 +26,11 @@ class TOTPTestCase extends TestCase{
         $hotp = new TOTP($key, $this->config['timestep'], $this->config['digits'], $this->config['algoTOTP']);
 
         $this->assertNotNull($hotp);
-        $this->assertInstanceOf(TOTP::class,$hotp);
+        $this->assertInstanceOf(TOTP::class, $hotp);
     }
 
-    public function testOTPIsGenerated(){
+    public function test_otp_is_generated()
+    {
         $larotp = new LarOTP($this->config);
 
         $key = base64_decode($larotp->createSecretKey());
