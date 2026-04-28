@@ -6,9 +6,12 @@ namespace circlesandlambdas\larotp\Tests;
 
 use circlesandlambdas\larotp\LarOTP;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-class LarOTPTestCase extends TestCase
+#[CoversClass(LarOTP::class)]
+class LarOTPTest extends TestCase
 {
+
     public function test_encoded_key_should_be_created()
     {
         $config = [
@@ -35,8 +38,4 @@ class LarOTPTestCase extends TestCase
 
         $this->assertIsString($decoded_key);
     }
-
-    // public function TestHOTPObjectShouldBeCreated(){
-
-    // }
 }

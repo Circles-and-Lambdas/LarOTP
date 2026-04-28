@@ -1,2 +1,12 @@
+# Package Files
 /vendor
 composer.lock
+
+# Caches
+.phpunit.cache
+
+# Misc
+phpunit.xml
+testbench.yaml
+/coverage-report
+/.vscode

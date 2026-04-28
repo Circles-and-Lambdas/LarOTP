@@ -6,9 +6,11 @@ namespace circlesandlambdas\larotp\Tests;
 
 use circlesandlambdas\larotp\LarOTP;
 use circlesandlambdas\larotp\TOTP;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-class TOTPTestCase extends TestCase
+#[CoversClass(TOTP::class)]
+class TOTPTest extends TestCase
 {
     protected function createTOTP()
     {

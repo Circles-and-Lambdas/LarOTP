@@ -6,9 +6,11 @@ namespace circlesandlambdas\larotp\Tests;
 
 use circlesandlambdas\larotp\HOTP;
 use circlesandlambdas\larotp\LarOTP;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-class HOTPTestCase extends TestCase
+#[CoversClass(HOTP::class)]
+class HOTPTest extends TestCase
 {
     public $config = [
         'key_length' => 32,
