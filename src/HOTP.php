@@ -101,6 +101,24 @@ final class HOTP extends OTP implements OTPInterface
     {
         $output = [];
 
+        if (empty($clientOTP)) {
+            return [
+                'success' => false,
+                'message' => 'OTP cannot be empty',
+            ];
+        }
+
+        if (! isset($this->counter)) {
+            throw new InvalidArgumentException('Missing Client Counter');
+        }
+
+        if (strlen($clientOTP) !== $this->digits) {
+            return [
+                'success' => false,
+                'message' => 'Invalid Input',
+            ];
+        }
+
         for ($i = $this->counter; $i <= $this->counter + $this->lookahead_window; $i++) {
             if (hash_equals($this->generateOTP(), $clientOTP)) {
                 $this->counter++;

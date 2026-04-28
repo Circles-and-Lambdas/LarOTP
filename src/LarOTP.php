@@ -12,12 +12,15 @@ use RuntimeException;
 
 class LarOTP
 {
+    public $config;
+
     public function __construct(?array $config = null)
     {
-        if (isset($this->config)) {
+        $this->config = $config ?? config('larotp');
+
+        if (! isset($this->config)) {
             throw new RuntimeException('larotp config not set up correctly');
         }
-        $this->config = $config ?? config('larotp');
     }
 
     /**

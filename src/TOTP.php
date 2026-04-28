@@ -9,6 +9,8 @@ date_default_timezone_set('UTC');
 use InvalidArgumentException;
 use RuntimeException;
 
+use function ord;
+
 class TOTP extends OTP implements OTPInterface
 {
     private $key;
@@ -21,7 +23,7 @@ class TOTP extends OTP implements OTPInterface
 
     public $unix_start_time = 0;
 
-    private $lookahead_window = 5;
+    private $lookahead_window = 1; // 30sec in unixtime.
 
     public function __construct($key, $timestep, $digits, $algo)
     {
@@ -88,5 +90,76 @@ class TOTP extends OTP implements OTPInterface
         return $time;
     }
 
-    public function verify(string $clientOTP) {}
+    public function verify(string $clientOTP, ?int $customWindow = null)
+    {
+        $output = [];
+
+        if (empty($clientOTP)) {
+            return [
+                'verified' => false,
+                'message' => 'OTP cannot be empty',
+            ];
+        }
+
+        if (strlen($clientOTP) !== $this->digits) {
+            return [
+                'verified' => false,
+                'message' => 'Invalid OTP length',
+            ];
+        }
+
+        $window = $customWindow ?? $this->lookahead_window;
+
+        $currentTime = $this->generateTime();
+
+        for ($i = -$window; $i <= $window; $i++) {
+            $testTime = $currentTime + $i;
+
+            $generatedOTP = $this->generateOTPForTime($testTime);
+
+            if ($this->constantTimeCompare($clientOTP, $generatedOTP)) {
+
+                return $output = [
+                    'verified' => true,
+                    'message' => 'User successfully authenticated',
+                ];
+            }
+        }
+
+        return $output = [
+            'verified' => false,
+            'message' => 'Error during authentication',
+        ];
+    }
+
+    private function generateOTPForTime(float $timeCounter): string
+    {
+        $timeBinary = pack('N*', 0, $timeCounter);
+
+        $hmac = hash_hmac($this->algo, $timeBinary, $this->key, true);
+
+        $truncated = $this->truncate($hmac);
+
+        return $this->generateValue($truncated, $this->digits);
+    }
+
+    private function constantTimeCompare(string $known, string $user)
+    {
+        if (function_exists('hash_equals')) {
+            return hash_equals($known, $user);
+        }
+
+        if (strlen($known) !== strlen($user)) {
+            return false;
+        }
+
+        $result = 0;
+        $length = strlen($known);
+
+        for ($i = 0; $i < $length; $i++) {
+            $result |= ord($known[$i]) ^ ord($user[$i]);
+        }
+
+        return $result === 0;
+    }
 }
