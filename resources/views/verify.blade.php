@@ -194,7 +194,7 @@
 
                 function notify(response, results){
                     if(response.ok){
-                        toastr.success(result.message || "Success");
+                        toastr.success(results.message || "Success");
                     }else{
                         if(response.status === 422 && results.errors){
                             Object.values(results.errors).forEach(err => toastr.error(err[0]));

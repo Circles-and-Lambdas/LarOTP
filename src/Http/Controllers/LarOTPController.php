@@ -31,7 +31,7 @@ class LarOTPController extends Controller
         $otp_record = $user->checkOTPRecord();
 
         if (! $otp_record) {
-            $user->generateHOTP();
+            $user->generateTOTP();
         }
 
         $url = $this->verification_route;
@@ -72,7 +72,7 @@ class LarOTPController extends Controller
             ]);
         }
 
-        $verification_output = $user->verifyOTP($client_otp);
+        $verification_output = $user->verifyTOTP($client_otp);
 
         if ($verification_output['verified']) {
             $url = session()->pull('url.intended');
@@ -97,7 +97,7 @@ class LarOTPController extends Controller
     {
         $user = $request->user();
 
-        $otp = $user->generateHOTP();
+        $otp = $user->generateTOTP();
 
         if ($otp) {
             return response()->json([

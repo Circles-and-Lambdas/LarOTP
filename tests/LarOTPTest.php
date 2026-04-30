@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace circlesandlambdas\larotp\Tests;
 
 use circlesandlambdas\larotp\LarOTP;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 
 #[CoversClass(LarOTP::class)]
 class LarOTPTest extends TestCase
 {
-
     public function test_encoded_key_should_be_created()
     {
         $config = [

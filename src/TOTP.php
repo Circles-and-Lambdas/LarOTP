@@ -162,4 +162,9 @@ class TOTP extends OTP implements OTPInterface
 
         return $result === 0;
     }
+
+    public function store($clientOTP, $user_id)
+    {
+        $this->storeOTP($clientOTP, $user_id);
+    }
 }

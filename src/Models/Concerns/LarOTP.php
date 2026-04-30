@@ -7,8 +7,8 @@ namespace circlesandlambdas\larotp\Models\Concerns;
 use circlesandlambdas\larotp\HOTP;
 use circlesandlambdas\larotp\Models\UserCounter;
 use circlesandlambdas\larotp\Models\UserOTP;
+use circlesandlambdas\larotp\TOTP;
 use Exception;
-use Illuminate\Auth\Authenticatable;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -110,7 +110,19 @@ trait LarOTP
         return $otp;
     }
 
-    public function verifyOTP($client_otp)
+    public function generateTOTP()
+    {
+
+        $totp = $this->TOTP();
+
+        $otp = $totp->generateOTP();
+
+        $totp->store($otp, $this->id);
+
+        return $otp;
+    }
+
+    public function verifyHOTP($client_otp)
     {
         $counter = $this->UserCounter($this);
 
@@ -119,6 +131,15 @@ trait LarOTP
         $output = $hotp->verify($client_otp);
 
         UserCounter::where('id', $this->id)->increment('counter');
+
+        return $output;
+    }
+
+    public function verifyTOTP($client_otp)
+    {
+        $totp = $this->TOTP();
+
+        $output = $totp->verify($client_otp);
 
         return $output;
     }
@@ -133,10 +154,14 @@ trait LarOTP
         return new HOTP($this->getSecretKey(), $user_counter, $this->config['digits'], $this->config['algo']);
     }
 
+    public function TOTP()
+    {
+        return new TOTP($this->getSecretKey(), $this->config['timestep'], $this->config['digits'], $this->config['algoTOTP']);
+    }
+
     /**
      * Function that generates the counter used during HOTP ganeration
      *
-     * @param  Authenticatable  $user
      * @return string $counter
      */
     public function UserCounter($user)
@@ -165,7 +190,7 @@ trait LarOTP
     {
 
         $user_otp = UserOTP::where('user_id', $this->id)
-            ->whereNotNull('verified_at')
+            ->whereNull('verified_at')
             ->latest('verified_at')
             ->first();
 
