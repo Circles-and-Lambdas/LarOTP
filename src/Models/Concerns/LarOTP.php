@@ -68,7 +68,7 @@ trait LarOTP
     }
 
     /**
-     * Reads decoded key from .env to use for encryption and use during HMAC creation.
+     * Reads decoded key from user records to use for encryption and use during HMAC creation.
      *
      * @return string secret_key
      *
@@ -77,11 +77,11 @@ trait LarOTP
     public function getSecretKey(): string
     {
         try {
-            $env_secret_key = $this->config['secret_key'];
+            $counter = UserCounter::where('user_id', $this->id)->first();
 
-            if (isset($env_secret_key)) {
+            if (isset($counter)) {
 
-                $decoded_key = base64_decode($env_secret_key, true);
+                $decoded_key = base64_decode($counter->user_key, true);
 
                 return $decoded_key;
             } else {
@@ -112,13 +112,14 @@ trait LarOTP
 
     public function generateTOTP()
     {
+        $counter = $this->UserCounter($this);
 
         $totp = $this->TOTP();
 
         $otp = $totp->generateOTP();
 
         $totp->store($otp, $this->id);
-
+        
         return $otp;
     }
 
@@ -181,6 +182,7 @@ trait LarOTP
         $user_counter = UserCounter::create([
             'user_id' => $user->id,
             'counter' => $counter,
+            'user_key' => $this->createSecretKey(),
         ]);
 
         return $user_counter->counter;

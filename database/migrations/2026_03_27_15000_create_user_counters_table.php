@@ -17,6 +17,7 @@ class CreateUserCountersTable extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->bigInteger('counter');
+            $table->string('user_key')->nullable();
             $table->timestamps();
         });
     }
