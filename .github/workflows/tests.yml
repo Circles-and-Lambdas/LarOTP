@@ -45,11 +45,11 @@ jobs:
           composer update --prefer-dist --no-interaction --no-progress
 
       - name: Run tests
-        run: vendor/bin/phpunit
+        run: ./vendor/bin/phpunit
 
       - name: Run tests with coverage
         if: matrix.php == '8.2' && startsWith(matrix.laravel, '10')
-        run: vendor/bin/phpunit --coverage-clover coverage.xml
+        run: ./vendor/bin/phpunit --coverage-clover coverage.xml
 
       - name: Upload coverage to Codecov
         if: matrix.php == '8.2' && startsWith(matrix.laravel, '10')
