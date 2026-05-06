@@ -1,6 +1,17 @@
 {
     "name": "circlesandlambdas/larotp",
     "description": "An OTP generation and Verification Laravel Package using RFC standards.",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "otp",
+        "hotp",
+        "totp",
+        "two-factor",
+        "2fa",
+        "authentication",
+        "security"
+    ],
     "require": {
         "php": "^8.2",
         "illuminate/support": "^10.0",
