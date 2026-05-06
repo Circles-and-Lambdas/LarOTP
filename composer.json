@@ -3,14 +3,14 @@
     "description": "An OTP generation and Verification Laravel Package using RFC standards.",
     "require": {
         "php": "^8.2",
-        "illuminate/support": "^12.0",
-        "illuminate/database": "^12.0",
-        "illuminate/notifications": "^12.0"
+        "illuminate/support": "^10.0",
+        "illuminate/database": "^10.0",
+        "illuminate/notifications": "^10.0"
     },
     "autoload": {
         "psr-4": {
             "circlesandlambdas\\larotp\\": "src/",
-            "Tests\\": "teste/"
+            "Tests\\": "tests/"
         }
     },
     "authors": [

@@ -20,6 +20,8 @@ class LarOTPServiceProvider extends ServiceProvider
         $this->app->singleton(LarOTP::class, function ($app) {
             return new LarOTP;
         });
+
+        $this->app->alias('larotp', LarOTP::class);
     }
 
     /**
@@ -31,7 +33,6 @@ class LarOTPServiceProvider extends ServiceProvider
         $this->registerMiddleware();
         $this->registerResources();
         $this->registerRoutes();
-        $this->registerCommands();
     }
 
     protected function registerSetup()
@@ -61,15 +62,6 @@ class LarOTPServiceProvider extends ServiceProvider
         Route::group($this->routeConfiguration(), function () {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
-    }
-
-    protected function registerCommands()
-    {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                CreateSymmKey::class,
-            ]);
-        }
     }
 
     protected function routeConfiguration()

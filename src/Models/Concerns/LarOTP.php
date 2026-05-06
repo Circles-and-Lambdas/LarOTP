@@ -192,8 +192,8 @@ trait LarOTP
     {
 
         $user_otp = UserOTP::where('user_id', $this->id)
-            ->whereNull('verified_at')
             ->latest('verified_at')
+            ->whereNull('verified_at')
             ->first();
 
         return $user_otp;
