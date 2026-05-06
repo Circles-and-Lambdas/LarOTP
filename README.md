@@ -1,6 +1,8 @@
 # LarOTP
 
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/Circles-and-Lambdas/LarOTP/test.yml?branch=main&label=tests&style=flat-square)](https://github.com/Circles-and-Lambdas/LarOTP/actions?query=workflow%3Atests+branch%3Amain)
+
 
 This is a Laravel package that generates a One Time Password (OTP) using standards from HOTP(rfc 4226) and TOTP (rfc 6238) algorithms. 
 
