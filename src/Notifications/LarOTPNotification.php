@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace circlesandlambdas\larotp\Notifications;
 
+use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class LarOTPNotification
+class LarOTPNotification extends Notification
 {
     public $otp;
 

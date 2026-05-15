@@ -31,6 +31,14 @@ abstract class OTP implements OTPInterface
             throw new InvalidArgumentException('Missing Truncation parameters', 0);
         }
 
+        if ($hmac === "") {
+            throw new InvalidArgumentException('Missing Truncation parameters', 0);
+        }
+
+        if(gettype($hmac) !== "string"){
+            throw new InvalidArgumentException("Invalid hmac data type. ".gettype($hmac)." given. String expected", 0);
+        }
+
         $offset = ord($hmac[19]) & 0x0F;
 
         $truncated = ((ord($hmac[$offset]) & 0x7F) << 24) |
@@ -49,6 +57,14 @@ abstract class OTP implements OTPInterface
      */
     public function generateValue($truncated, $digits)
     {
+        if(!isset($truncated) && !isset($digits)){
+            throw new InvalidArgumentException("Missing Values: TRUNC_HMAC:".isset($truncated).". DIGITS: ".isset($digits).".");
+        }
+
+        if(gettype($truncated) !== "string"){
+            throw new InvalidArgumentException("Invalid hmac data type. ".gettype($truncated)." given. String expected", 0);
+        }
+
         $otp_value = $truncated % pow(10, $digits);
 
         return str_pad((string) $otp_value, $digits, '0', STR_PAD_LEFT);

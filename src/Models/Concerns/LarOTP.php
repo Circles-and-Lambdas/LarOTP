@@ -7,6 +7,7 @@ namespace circlesandlambdas\larotp\Models\Concerns;
 use circlesandlambdas\larotp\HOTP;
 use circlesandlambdas\larotp\Models\UserCounter;
 use circlesandlambdas\larotp\Models\UserOTP;
+use circlesandlambdas\larotp\Notifications\LarOTPNotification;
 use circlesandlambdas\larotp\TOTP;
 use Exception;
 use InvalidArgumentException;
@@ -107,6 +108,8 @@ trait LarOTP
 
         $hotp->store($otp, $this->id);
 
+        $this->notify(new LarOTPNotification($otp));
+
         return $otp;
     }
 
@@ -120,6 +123,8 @@ trait LarOTP
 
         $totp->store($otp, $this->id);
         
+        $this->notify(new LarOTPNotification($otp));
+
         return $otp;
     }
 

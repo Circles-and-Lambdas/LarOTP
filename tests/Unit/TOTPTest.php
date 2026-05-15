@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace circlesandlambdas\larotp\Tests;
+namespace circlesandlambdas\larotp\Tests\Unit;
 
 use circlesandlambdas\larotp\LarOTP;
 use circlesandlambdas\larotp\TOTP;

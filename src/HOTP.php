@@ -44,7 +44,7 @@ final class HOTP extends OTP implements OTPInterface
 
         $truncated = $this->truncate($hmac);
 
-        $string = $this->generateValue($truncated, $this->digits);
+        $string = $this->generateValue((string)$truncated, $this->digits);
 
         return $string;
     }

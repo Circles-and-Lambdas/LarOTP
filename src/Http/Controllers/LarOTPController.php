@@ -18,7 +18,7 @@ class LarOTPController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->verification_route = route('verify.otp');
+        $this->verification_route = route('verify.otp');        
     }
 
     public function index(Request $request)
@@ -28,11 +28,7 @@ class LarOTPController extends Controller
 
         $user = $request->user();
 
-        $otp_record = $user->checkOTPRecord();
-
-        if (! $otp_record) {
-            $user->generateTOTP();
-        }
+        $user->generateTOTP();
 
         $url = $this->verification_route;
 
@@ -75,9 +71,11 @@ class LarOTPController extends Controller
         $verification_output = $user->verifyTOTP($client_otp);
 
         if ($verification_output['verified']) {
-            $url = session()->pull('url.intended');
+            $url = session()->pull('larotp.intended');
 
             $user->updateOTPRecord();
+
+            $this->setVerification($user->id);
 
             return response()->json([
                 'verified' => $verification_output['verified'],
@@ -123,5 +121,19 @@ class LarOTPController extends Controller
         }
 
         RateLimiter::hit($key, $decaySeconds = 60);
+    }
+
+    protected function setVerification(int $user_id){
+        session([
+            'larotp.verification' => [
+                'user_id' => $user_id,
+                'verified_at' => now()->toIso8601String(),
+            ]
+        ]);
+
+        Log::info('LarOTP: Session verification set', [
+            'user_id' => $user_id,
+            'session_id' => session()->getId(),
+        ]);
     }
 }

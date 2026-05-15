@@ -10,3 +10,4 @@ phpunit.xml
 testbench.yaml
 /coverage-report
 /.vscode
+/coverage

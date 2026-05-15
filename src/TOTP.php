@@ -39,7 +39,7 @@ class TOTP extends OTP implements OTPInterface
 
         $truncated = $this->truncate($hmac);
 
-        $string = $this->generateValue($truncated, $this->digits);
+        $string = $this->generateValue((string)$truncated, $this->digits);
 
         return $string;
     }
@@ -140,7 +140,7 @@ class TOTP extends OTP implements OTPInterface
 
         $truncated = $this->truncate($hmac);
 
-        return $this->generateValue($truncated, $this->digits);
+        return $this->generateValue((string)$truncated, $this->digits);
     }
 
     private function constantTimeCompare(string $known, string $user)
