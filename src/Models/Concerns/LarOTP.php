@@ -46,7 +46,7 @@ trait LarOTP
 
             if (! is_int($key_length)) {
                 throw new InvalidArgumentException(
-                    "Config 'key_lengh' must be an int. ".gettype($key_length).' given'
+                    "Config 'key_length' must be an int. ".gettype($key_length).' given'
                 );
             }
 
@@ -86,7 +86,7 @@ trait LarOTP
 
                 return $decoded_key;
             } else {
-                throw new InvalidArgumentException('SECRET_OTP_KEY not found on .env file', 0);
+                throw new InvalidArgumentException("SECRET_OTP_KEY not found for user_id $this->id", 0);
             }
         } catch (\Throwable $th) {
             error_log('Unexpected errors. '.$th->getMessage());

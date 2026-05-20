@@ -29,6 +29,6 @@ class CreateUserCountersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_counter');
+        Schema::dropIfExists('user_counters');
     }
 }

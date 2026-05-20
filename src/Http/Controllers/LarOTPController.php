@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace circlesandlambdas\larotp\Http\Controllers;
 
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -117,7 +118,9 @@ class LarOTPController extends Controller
         if (RateLimiter::tooManyAttempts($key, $maxAttempts = 5)) {
             $seconds = RateLimiter::availableIn($key);
 
-            return response()->json(['message' => "Wait $seconds seconds"], 429);
+            throw new HttpResponseException(
+                response()->json(['message' => "Wait $seconds seconds"], 429)
+            );
         }
 
         RateLimiter::hit($key, $decaySeconds = 60);
